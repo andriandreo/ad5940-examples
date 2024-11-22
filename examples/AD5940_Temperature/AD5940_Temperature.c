@@ -128,6 +128,7 @@ void _ad5940_analog_init(void){
  * @brief Init everything we need to measure temperature.
  */
 void AD5940_TemperatureInit(void){
+  AD5940Err error = AD5940ERR_OK;
   uint32_t const *pSeqCmd;
   uint32_t seq_len;
   SEQInfo_Type seq_info;
@@ -149,18 +150,21 @@ void AD5940_TemperatureInit(void){
 
   AD5940_SEQGpioCtrlS(AGPIO_Pin1);  //pull high AGPIO1 so we know the sequencer is running by observing pin status with oscilloscope etc.
   AD5940_SEQGenInsert(SEQ_WAIT(16*200));  /* Time for reference settling(if ad5940 is just wake up from hibernate mode) */
-  AD5940_AFECtrlS(AFECTRL_ADCPWR, bTRUE); /* Turn ON ADC power */
+  AD5940_AFECtrlS(AFECTRL_ADCPWR|AFECTRL_TEMPSPWR, bTRUE); /* Turn ON ADC and TEMP sensor power */
   AD5940_SEQGenInsert(SEQ_WAIT(16*50));   /* wait another 50us for ADC to settle. */
-  AD5940_AFECtrlS(AFECTRL_TEMPCNV|AFECTRL_ADCCNV, bTRUE);  /* Start ADC convert */
+  AD5940_AFECtrlS(AFECTRL_TEMPCNV|AFECTRL_ADCCNV|AFECTRL_SINC2NOTCH, bTRUE);  /* Start ADC convert */
   AD5940_SEQGenInsert(SEQ_WAIT(WaitClks));
-  AD5940_AFECtrlS(AFECTRL_TEMPCNV|AFECTRL_ADCPWR, bFALSE);    /* Stop ADC */
+  AD5940_AFECtrlS(AFECTRL_TEMPCNV|AFECTRL_ADCPWR|AFECTRL_SINC2NOTCH, bFALSE); /* Stop ADC */
+  AD5940_AFECtrlS(AFECTRL_ADCPWR|AFECTRL_TEMPSPWR, bFALSE); /* Turn OFF ADC and TEMP sensor power */
   AD5940_SEQGenInsert(SEQ_WAIT(20));			/* Add some delay before put AD5940 to hibernate, needs some clock to move data to FIFO. */
   AD5940_SEQGpioCtrlS(0);     /* pull low AGPIO so we know end of sequence.*/
   AD5940_EnterSleepS();/* Goto hibernate */
-  AD5940_SEQGenCtrl(bFALSE);  /* stop sequence generator */
-  if(AD5940_SEQGenFetchSeq(&pSeqCmd, &seq_len) != AD5940ERR_OK){
+  error = AD5940_SEQGenFetchSeq(&pSeqCmd, &seq_len);
+  AD5940_SEQGenCtrl(bFALSE); /* Stop sequencer generator */
+  if(error != AD5940ERR_OK){
     puts("Sequence generator error!");
   }
+  
   seq_info.pSeqCmd = pSeqCmd;
   seq_info.SeqId = SEQID_0; //use SEQ0 to run this sequence
   seq_info.SeqLen = seq_len;
@@ -188,6 +192,7 @@ void AD5940_TemperatureISR(void){
   }
   AD5940_SleepKeyCtrlS(SLPKEY_LOCK);  /* We need time to read data from FIFO, so, do not let AD5940 goes to hibernate automatically */
   IntcFlag = AD5940_INTCGetFlag(AFEINTC_0);
+  //printf("IntcFlag = 0x%08lx\n", IntcFlag); /* DEBUG */
   if(IntcFlag&AFEINTSRC_DATAFIFOTHRESH){
     FifoCnt = AD5940_FIFOGetCnt();
     FifoCnt = FifoCnt>BUFF_SIZE?BUFF_SIZE:FifoCnt;
@@ -200,17 +205,18 @@ void AD5940_TemperatureISR(void){
 }
 
 void AD5940_PrintResult(void){
+  //printf("Temperature data count = %ld\n", data_count); /* DEBUG */
   for(int i=0; i<data_count; i++){
     int32_t data = buff[i]&0xffff;
     data -= 0x8000;	//data from SINC2 is added 0x8000, while data from register TEMPSENSDAT has no 0x8000 offset.
-    printf("Result[%d] = %d, %.2f(C)\n", i, data, data/8.13f/1.5f-273.15f);
+    printf("Result[%d] = %ld, %.2f(C)\n", i, data, data/8.13f/1.5f-273.15f);
   }
 }
 
 void AD5940_Main(void){
   AD5940PlatformCfg();
-  printf("Internal calibration register value:\nGain: 0x%08x\n", AD5940_ReadReg(REG_AFE_ADCGAINDIOTEMPSENS));
-  printf("Offset: 0x%08x\n", AD5940_ReadReg(REG_AFE_ADCOFFSETEMPSENS1));
+  printf("Internal calibration register value:\nGain: 0x%08lx\n", AD5940_ReadReg(REG_AFE_ADCGAINDIOTEMPSENS));
+  printf("Offset: 0x%08lx\n", AD5940_ReadReg(REG_AFE_ADCOFFSETEMPSENS1));
   AD5940_TemperatureInit();
   AD5940_WUPTCtrl(bTRUE); //start wupt, so the sequence will be run periodically.
   while(1){
@@ -222,4 +228,3 @@ void AD5940_Main(void){
     }
   }
 }
-
