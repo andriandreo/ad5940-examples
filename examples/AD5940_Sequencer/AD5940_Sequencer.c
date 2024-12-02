@@ -248,7 +248,7 @@ void AD5940_Main(void)
   while(AD5940_INTCTestFlag(AFEINTC_1, AFEINTSRC_CUSTOMINT2) == bFALSE);  /* Test INTC1, we enabled all interrupts in INTC1. */
   AD5940_INTCClrFlag(AFEINTSRC_CUSTOMINT2);
   printf("sequence2 has been executed\n");
-  printf("SWCON:0x%08x\n", AD5940_ReadReg(REG_AFE_SWCON));
+  printf("SWCON:0x%08x\n", (unsigned int)AD5940_ReadReg(REG_AFE_SWCON));
   AD5940_INTCClrFlag(AFEINTSRC_ALLINT);
 
   /* Toggle GPIO to trigger sequencer2 */
@@ -286,28 +286,28 @@ int32_t SeqISR(void)
     AD5940_INTCClrFlag(AFEINTSRC_CUSTOMINT0);
     printf("Custom INT0!\n");
     temp = AD5940_ReadReg(REG_AFE_SWCON);
-    printf("SWCON:0x%08x\n", temp);
+    printf("SWCON:0x%08x\n", (unsigned int)temp);
   }
   if(IntFlag & AFEINTSRC_CUSTOMINT1)
   {
     AD5940_INTCClrFlag(AFEINTSRC_CUSTOMINT1);
     printf("Custom INT1!\n");
     temp = AD5940_ReadReg(REG_AFE_SWCON);
-    printf("SWCON:0x%08x\n", temp);
+    printf("SWCON:0x%08x\n", (unsigned int)temp);
   }
   if(IntFlag & AFEINTSRC_CUSTOMINT2)
   {
     AD5940_INTCClrFlag(AFEINTSRC_CUSTOMINT2);
     printf("Custom INT2!\n");
     temp = AD5940_ReadReg(REG_AFE_SWCON);
-    printf("SWCON:0x%08x\n", temp);
+    printf("SWCON:0x%08x\n", (unsigned int)temp);
   }
   if(IntFlag & AFEINTSRC_CUSTOMINT3)
   {
     AD5940_INTCClrFlag(AFEINTSRC_CUSTOMINT3);
     printf("Custom INT3!\n");
     temp = AD5940_ReadReg(REG_AFE_SWCON);
-    printf("SWCON:0x%08x\n", temp);
+    printf("SWCON:0x%08x\n", (unsigned int)temp);
   }
   if(IntFlag & AFEINTSRC_ENDSEQ)  /* This interrupt is generated when Sequencer is disabled. */
   {
