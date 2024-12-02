@@ -136,7 +136,7 @@ void AD5940_TemperatureInit(void){
   ClksCalInfo_Type clks_cal;
   uint32_t WaitClks;
   clks_cal.DataType = DATATYPE_SINC2;
-  clks_cal.DataCount = 1;             /* Sample one data when wakeup */
+  clks_cal.DataCount = 1;             /* Sample one data when wakeup - SET TO >1 TO CONTINUOUS STREAM, BE AWARE OF >FREQ. (?) LIMIT TO BUFFER SIZE (`BUFF_SIZE`) [!!!]*/
   clks_cal.ADCSinc2Osr = SINC2OSR_SEL;
   clks_cal.ADCSinc3Osr = SINC3OSR_SEL;
   clks_cal.ADCAvgNum = 0;
@@ -228,3 +228,4 @@ void AD5940_Main(void){
     }
   }
 }
+
