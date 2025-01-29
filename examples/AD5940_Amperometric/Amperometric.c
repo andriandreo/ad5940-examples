@@ -2,9 +2,9 @@
  *****************************************************************************
  @file:    Amperometric.c
  @author:  $Author: mlambe (andriandreo's edit)$
- @brief:   Amperometric measurement.
+ @brief:   Amperometric measurement - 3-wire RE0/CE0/SE0 test (1st option in Table 21 of datasheet)
  @version: $Revision: 766 $
- @date:    $Date: 2018-03-21 14:09:35 +0100 (Wed, 21 Mar 2018) $
+ @date:    $Date: 2025-01-29 (Wed, 29 Jan 2025) $
  -----------------------------------------------------------------------------
 
 Copyright (c) 2017-2019 Analog Devices, Inc. All Rights Reserved.
