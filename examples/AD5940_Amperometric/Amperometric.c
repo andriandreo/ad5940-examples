@@ -1,7 +1,7 @@
 /*!
  *****************************************************************************
  @file:    Amperometric.c
- @author:  $Author: mlambe $
+ @author:  $Author: mlambe (andriandreo's edit)$
  @brief:   Amperometric measurement.
  @version: $Revision: 766 $
  @date:    $Date: 2018-03-21 14:09:35 +0100 (Wed, 21 Mar 2018) $
@@ -15,6 +15,8 @@ Analog Devices Software License Agreement.
  
 *****************************************************************************/
 #include "Amperometric.h"
+
+#define RCAL 10000.0 /* Set to the RCAL value for your design - 10kOhm in the case of EVAL-board (!) */
 
 /* 
   Application configuration structure. Specified by user from template.
@@ -36,7 +38,7 @@ AppAMPCfg_Type AppAMPCfg =
   .AdcClkFreq = 16000000.0,
   .AmpODR = 1.0,                /* Sample time in seconds. I.e. every 5 seconds make a measurement */
   .NumOfData = -1,
-  .RcalVal = 10000.0,           /* RCAL = 10kOhm */
+  .RcalVal = RCAL,              
   .PwrMod = AFEPWR_LP,
   .AMPInited = bFALSE,
   .StopRequired = bFALSE,
@@ -45,9 +47,9 @@ AppAMPCfg_Type AppAMPCfg =
   .ExtRtia = bFALSE,            /* Set to true if using external RTIA */
   .LptiaRtiaSel = LPTIARTIA_4K, /* COnfigure RTIA */
   .LpTiaRf = LPTIARF_1M,        /* Configure LPF resistor */
-  .LpTiaRl = LPTIARLOAD_100R,
+  .LpTiaRl = LPTIARLOAD_SHORT,
   .ReDoRtiaCal = bTRUE,
-  .RtiaCalValue = 0,
+  .RtiaCalValue = {0.0, 0.0},
 	.ExtRtiaVal = 0,
   
 /*LPDAC Configure */
@@ -249,7 +251,8 @@ static AD5940Err AppAMPSeqMeasureGen(void)
   uint32_t WaitClks;
   ClksCalInfo_Type clks_cal;
   
-  clks_cal.DataType = DATATYPE_SINC2;
+  clks_cal.DataType = DATATYPE_NOTCH;
+  clks_cal.ADCRate = ADCRATE_800KHZ; /* ONLY used when data type is DATATYPE_NOTCH */
   clks_cal.DataCount = 1;
   clks_cal.ADCSinc2Osr = AppAMPCfg.ADCSinc2Osr;
   clks_cal.ADCSinc3Osr = AppAMPCfg.ADCSinc3Osr;
@@ -304,6 +307,8 @@ fImpPol_Type RtiaCalValue;  /* Calibration result */
   lprtia_cal.bWithCtia = bFALSE;
   AD5940_LPRtiaCal(&lprtia_cal, &RtiaCalValue);
   AppAMPCfg.RtiaCalValue = RtiaCalValue;
+
+  printf("Rcal.Magnitude = %.1f ohm\n", AppAMPCfg.RtiaCalValue.Magnitude); // DEBUG [!!!]
  
   return AD5940ERR_OK;
 }
@@ -484,6 +489,8 @@ float AppAMPCalcCurrent(uint32_t ADCcode)
   float fCurrent, fVoltage = 0.0;
   fVoltage = AppAMPCalcVoltage(ADCcode);
   fCurrent = fVoltage/AppAMPCfg.RtiaCalValue.Magnitude;
+  
+  printf("%.4f V\n", fVoltage); // DEBUG [!!!]
   
   return -fCurrent*1000000;
 }
