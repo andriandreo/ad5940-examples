@@ -112,8 +112,24 @@ void _ad5940_analog_init(void){
   ADCBaseCfg_Type adc_base;
   ADCFilterCfg_Type adc_filter;
 
-  /* Configure AFE power mode and bandwidth */
-  //AD5940_AFEPwrBW(AFEPWR_LP, AFEBW_250KHZ); // ONLY needed in this example for DAC (`VREF1P8DAC`)
+  /* Configure AFE power mode and bandwidth - ONLY needed in this example for DAC (`VREF1P8DAC`) */
+  /********************************************************************************************* */
+  //AD5940_AFEPwrBW(AFEPWR_LP, AFEBW_250KHZ);
+  // aferef_cfg.HpBandgapEn = bTRUE;
+  // aferef_cfg.Hp1V1BuffEn = bTRUE;
+  // aferef_cfg.Hp1V8BuffEn = bTRUE;       /* The High speed buffers are automatically turned off during hibernate */
+  // aferef_cfg.Disc1V1Cap = bFALSE;
+  // aferef_cfg.Disc1V8Cap = bFALSE;
+  // aferef_cfg.Hp1V8ThemBuff = bFALSE;
+  // aferef_cfg.Hp1V8Ilimit = bFALSE;
+  // aferef_cfg.Lp1V1BuffEn = bFALSE;
+  // aferef_cfg.Lp1V8BuffEn = bFALSE;
+  /* LP reference control - turn off them to save power*/
+  // aferef_cfg.LpBandgapEn = bFALSE;
+  // aferef_cfg.LpRefBufEn = bFALSE;
+  // aferef_cfg.LpRefBoostEn = bFALSE;
+  // AD5940_REFCfgS(&aferef_cfg);
+  /********************************************************************************************* */
 
   // Init ad5940 for ADC measurement.
   AD5940_AFECtrlS(AFECTRL_ALL, bFALSE);  /* Init all to disable state */
@@ -166,7 +182,7 @@ void AD5940_adcInit(void){
   
   AD5940_SEQGenInsert(SEQ_WAIT(16*200));  /* Time for reference settling (if ad5940 is just wake up from hibernate mode) */
   AD5940_AFECtrlS(AFECTRL_ADCPWR, bTRUE); /* Turn ON ADC power */
-  AD5940_ADCMuxCfgS(ADCMUXP_VSE0, ADCMUXN_AIN1);
+  AD5940_ADCMuxCfgS(ADCMUXP_VSE0, ADCMUXN_AIN1); // Can be avoided when no MUX is desired - Already configured by `adc_base.ADCMuxP` and `adc_base.ADCMuxN` above (!)
   //AD5940_ADCMuxCfgS(ADCMUXP_VREF1P8DAC, ADCMUXN_VSET1P1); // DAC Vref
   AD5940_SEQGenInsert(SEQ_WAIT(16*50));   /* Wait another 50µs for ADC to settle. */
   AD5940_AFECtrlS(AFECTRL_ADCCNV|AFECTRL_SINC2NOTCH, bTRUE);  /* Start ADC convert */
