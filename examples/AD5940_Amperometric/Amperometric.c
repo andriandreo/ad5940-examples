@@ -22,7 +22,7 @@ Analog Devices Software License Agreement.
 /* 
   Application configuration structure. Specified by user from template.
   The variables are usable in this whole application.
-  It includes basic configuration for sequencer generator and application related parameters
+  It includes basic configuration for sequencer generator and application related parameters.
 */
 AppAMPCfg_Type AppAMPCfg = 
 {
@@ -37,7 +37,7 @@ AppAMPCfg_Type AppAMPCfg =
   .SysClkFreq = 16000000.0,
   .WuptClkFreq = 32000.0,
   .AdcClkFreq = 16000000.0,
-  .AmpODR = 1.0,                /* Sample time in seconds. I.e. every 5 seconds make a measurement */
+  .AmpODR = 1.0,                /* Sample time in seconds. I.e. every 5 (FIFO_THRES = 5) seconds make a measurement */
   .NumOfData = -1,
   .RcalVal = RCAL,              
   .PwrMod = AFEPWR_LP,
