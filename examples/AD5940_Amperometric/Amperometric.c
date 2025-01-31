@@ -17,6 +17,7 @@ Analog Devices Software License Agreement.
 #include "Amperometric.h"
 
 #define RCAL 10000.0 /* Set to the RCAL value for your design - 10kOhm in the case of EVAL-board (!) */
+#define EXT_RTIA 0.0 /* Set to the External RTIA value for your design - Not set for EVAL-board (!) */
 
 /* 
   Application configuration structure. Specified by user from template.
@@ -50,7 +51,7 @@ AppAMPCfg_Type AppAMPCfg =
   .LpTiaRl = LPTIARLOAD_SHORT,
   .ReDoRtiaCal = bTRUE,
   .RtiaCalValue = {0.0, 0.0},
-	.ExtRtiaVal = 0,
+	.ExtRtiaVal = EXT_RTIA,
   
 /*LPDAC Configure */
   .Vzero = 1100,                /* Sets voltage on SE0 and LPTIA */
