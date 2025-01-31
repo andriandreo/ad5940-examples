@@ -1,10 +1,10 @@
 /*!
  *****************************************************************************
  @file:    Amperometric.h
- @author:  $Author: mlambe $
+ @author:  $Author: mlambe (andriandreo's edit) $
  @brief:   Amperometric measurement header file.
- @version: $Revision: 766 $
- @date:    $Date: 2018-03-21 14:09:35 +0100 (Wed, 21 Mar 2018) $
+ @version: $Revision: 767 $
+ @date:    $Date: 2025-01-31 (Fri, 31 Jan 2025) $
  -----------------------------------------------------------------------------
 
 Copyright (c) 2017-2019 Analog Devices, Inc. All Rights Reserved.
@@ -20,6 +20,9 @@ Analog Devices Software License Agreement.
 #include "stdio.h"
 #include "string.h"
 #include "math.h"
+
+#define RCAL 10000.0 /* Set to the RCAL value for your design - 10kOhm in the case of EVAL-board (!) */
+#define EXT_RTIA 0.0 /* Set to the External RTIA value for your design - Not set for EVAL-board (!) */
 
 #define DAC12BITVOLT_1LSB   (2200.0f/4095)  //mV
 #define DAC6BITVOLT_1LSB    (DAC12BITVOLT_1LSB*64)  //mV

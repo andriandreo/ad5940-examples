@@ -1,9 +1,9 @@
 /*!
  *****************************************************************************
  @file:    Amperometric.c
- @author:  $Author: mlambe (andriandreo's edit)$
+ @author:  $Author: mlambe (andriandreo's edit) $
  @brief:   Amperometric measurement - 3-wire RE0/CE0/SE0 test (1st option in Table 21 of datasheet)
- @version: $Revision: 766 $
+ @version: $Revision: 767 $
  @date:    $Date: 2025-01-31 (Fri, 31 Jan 2025) $
  -----------------------------------------------------------------------------
 
@@ -16,8 +16,6 @@ Analog Devices Software License Agreement.
 *****************************************************************************/
 #include "Amperometric.h"
 
-#define RCAL 10000.0 /* Set to the RCAL value for your design - 10kOhm in the case of EVAL-board (!) */
-#define EXT_RTIA 0.0 /* Set to the External RTIA value for your design - Not set for EVAL-board (!) */
 
 /* 
   Application configuration structure. Specified by user from template.

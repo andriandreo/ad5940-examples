@@ -1,10 +1,10 @@
 /*!
  *****************************************************************************
  @file:    AD5940Main.c
- @author:  $Author: nxu2 $
+ @author:  $Author: nxu2 (andriandreo's edit) $
  @brief:   Used to control specific application and further process data.
- @version: $Revision: 766 $
- @date:    $Date: 2017-08-21 14:09:35 +0100 (Mon, 21 Aug 2017) $
+ @version: $Revision: 767 $
+ @date:    $Date: 2025-01-31 (Fri, 31 Jan 2025) $
  -----------------------------------------------------------------------------
 Copyright (c) 2017-2019 Analog Devices, Inc. All Rights Reserved.
 This software is proprietary to Analog Devices, Inc. and its licensors.
@@ -17,6 +17,7 @@ Analog Devices Software License Agreement.
 #include "string.h"
 #include "math.h"
 #include "Amperometric.h"
+
 
 #define APPBUFF_SIZE 1000
 uint32_t AppBuff[APPBUFF_SIZE];
@@ -104,7 +105,7 @@ void AD5940AMPStructInit(void)
   /* Configure general parameters */
   pAMPCfg->SeqStartAddr = 0;
   pAMPCfg->MaxSeqLen = 512;     /* @todo add checker in function */  
-  pAMPCfg->RcalVal = 10000.0;
+  pAMPCfg->RcalVal = RCAL;
   pAMPCfg->NumOfData = -1;      /* Never stop until you stop it manually by AppAMPCtrl() function */	
 	
 	
